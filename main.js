@@ -1,6 +1,9 @@
 const { app, BrowserWindow, session, Tray, Menu, nativeImage, shell } = require('electron');
 const path = require('path');
 
+// Use shared session storage so all iCloud apps share authentication
+app.setPath('sessionData', path.join(app.getPath('appData'), 'icloud-session'));
+
 let mainWindow;
 let tray;
 let isQuitting = false;
@@ -20,16 +23,14 @@ if (!gotTheLock) {
 }
 
 function createWindow() {
-  if (mainWindow) {
-    return;
-  }
+  if (mainWindow) return;
 
   mainWindow = new BrowserWindow({
     width: 1920,
     height: 1080,
     webPreferences: {
       nodeIntegration: true,
-      partition: 'persist:icloud-contacts',
+      partition: 'persist:icloud',
     }
   });
 
@@ -41,54 +42,30 @@ function createWindow() {
   });
 
   mainWindow.setMenu(null);
-
-  mainWindow.webContents.on("new-window", function (event, url) {
-    event.preventDefault();
-    if (url !== "about:blank#blocked") shell.openExternal(url);
-  });
-
+  mainWindow.webContents.on("new-window", (event, url) => { event.preventDefault(); if (url !== "about:blank#blocked") shell.openExternal(url); });
   mainWindow.loadURL('https://www.icloud.com/contacts');
 
   ses.cookies.on('changed', (event, cookie, cause, removed) => {
-    if (!removed && cookie.domain && cookie.domain.includes('.icloud.com')) {
-      if (cookie.name === 'X-APPLE-WEBAUTH-TOKEN') {
-        app.setLoginItemSettings({ openAtLogin: true, path: process.execPath });
-      }
-    }
+    if (!removed && cookie.domain?.includes('.icloud.com') && cookie.name === 'X-APPLE-WEBAUTH-TOKEN')
+      app.setLoginItemSettings({ openAtLogin: true, path: process.execPath });
   });
 
-  mainWindow.on('close', (event) => {
-    if (!isQuitting) {
-      event.preventDefault();
-      mainWindow.hide();
-    }
-  });
-
+  mainWindow.on('close', (event) => { if (!isQuitting) { event.preventDefault(); mainWindow.hide(); } });
   mainWindow.on('closed', () => { mainWindow = null; });
 }
 
 function createTray() {
-  if (tray) { return; }
-
+  if (tray) return;
   const icon = nativeImage.createFromPath(path.join(__dirname, 'icon.png'));
   tray = new Tray(icon);
-  const contextMenu = Menu.buildFromTemplate([
-    { label: 'Show iCloud Contacts', click: () => { if (!mainWindow) { createWindow(); } mainWindow.show(); } },
-    { label: 'Quit', click: () => { isQuitting = true; app.quit(); } },
-  ]);
-
   tray.setToolTip('iCloud Contacts');
-  tray.setContextMenu(contextMenu);
-
-  tray.on('click', () => {
-    if (!mainWindow) { createWindow(); return; }
-    if (mainWindow.isVisible()) { mainWindow.hide(); } else { mainWindow.show(); }
-  });
+  tray.setContextMenu(Menu.buildFromTemplate([
+    { label: 'Show iCloud Contacts', click: () => { if (!mainWindow) createWindow(); mainWindow.show(); } },
+    { label: 'Quit', click: () => { isQuitting = true; app.quit(); } }
+  ]));
+  tray.on('click', () => { if (!mainWindow) { createWindow(); return; } mainWindow.isVisible() ? mainWindow.hide() : mainWindow.show(); });
 }
 
 app.on('ready', () => { createWindow(); createTray(); });
-app.on('window-all-closed', (event) => { if (!isQuitting) { event.preventDefault(); } });
-app.on('before-quit', async () => {
-  const ses = session.fromPartition('persist:icloud-contacts');
-  await ses.cookies.flushStore();
-});
+app.on('window-all-closed', (event) => { if (!isQuitting) event.preventDefault(); });
+app.on('before-quit', async () => { await session.fromPartition('persist:icloud').cookies.flushStore(); });
