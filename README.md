@@ -1,11 +1,13 @@
-# iCloud Contacts for Windows
+# iCloud Contacts for Windows — Unofficial Desktop App
 
 [![Release](https://img.shields.io/github/v/release/taylorivanoff/icloud-contacts-windows)](https://github.com/taylorivanoff/icloud-contacts-windows/releases)
 [![Downloads](https://img.shields.io/github/downloads/taylorivanoff/icloud-contacts-windows/total)](https://github.com/taylorivanoff/icloud-contacts-windows/releases)
 [![License](https://img.shields.io/github/license/taylorivanoff/icloud-contacts-windows)](LICENSE)
 [![Buy Me A Coffee](https://img.shields.io/badge/Buy%20Me%20A%20Coffee-support-yellow?style=flat&logo=buy-me-a-coffee)](https://buymeacoffee.com/taylorivanoff)
 
-A native Windows application for accessing iCloud Contacts from [icloud.com](https://www.icloud.com/).
+Unofficial **iCloud Contacts for Windows** desktop app. Access iCloud Contacts from [icloud.com](https://www.icloud.com/) in a dedicated Electron client with system tray, auto-updates, and shared Apple ID authentication.
+
+Manage your Apple iCloud Contacts on Windows in a dedicated desktop app with tray integration and shared authentication.
 
 ## Features
 
@@ -36,6 +38,10 @@ bun run start
 ```bash
 bun run release
 ```
+
+## Keywords
+
+iCloud Contacts for Windows, Apple Contacts Windows app, iCloud address book desktop, unofficial iCloud Contacts PC client
 
 ## Contributing
 
