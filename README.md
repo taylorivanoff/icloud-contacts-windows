@@ -3,7 +3,6 @@
 [![Release](https://img.shields.io/github/v/release/taylorivanoff/icloud-contacts-windows)](https://github.com/taylorivanoff/icloud-contacts-windows/releases)
 [![Downloads](https://img.shields.io/github/downloads/taylorivanoff/icloud-contacts-windows/total)](https://github.com/taylorivanoff/icloud-contacts-windows/releases)
 [![License](https://img.shields.io/github/license/taylorivanoff/icloud-contacts-windows)](LICENSE)
-[![Buy Me A Coffee](https://img.shields.io/badge/Buy%20Me%20A%20Coffee-support-yellow?style=flat&logo=buy-me-a-coffee)](https://buymeacoffee.com/taylorivanoff)
 
 iCloud Contacts desktop app for Windows. Access iCloud Contacts from [icloud.com](https://www.icloud.com/).
 
